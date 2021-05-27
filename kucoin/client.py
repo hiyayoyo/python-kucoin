@@ -1206,6 +1206,25 @@ class Client(object):
         if symbol is not None:
             data['symbol'] = symbol
         return self._delete('orders', True, data=data)
+    
+    def cancel_all_orders(self, symbol=None):
+        """Cancel all orders
+        https://docs.kucoin.com/#cancel-all-orders
+        .. code:: python
+            res = client.cancel_all_orders()
+        :returns: ApiResponse
+        .. code:: python
+            {
+                "cancelledOrderIds": [
+                    "5bd6e9286d99522a52e458de"
+                ]
+            }
+        :raises: KucoinResponseException, KucoinAPIException
+        """
+        data = {}
+        if symbol is not None:
+            data['symbol'] = symbol
+        return self._delete('margin/order', True, data=data)
 
     def get_orders(self, symbol=None, status=None, side=None, order_type=None,
                    start=None, end=None, page=None, limit=None):
