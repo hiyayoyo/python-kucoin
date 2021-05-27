@@ -1148,7 +1148,7 @@ class Client(object):
             data['iceberg'] = iceberg
             data['visible_size'] = visible_size
 
-        return <client_object>._post('margin/order', True, data=data)
+        return self._post('margin/order', True, data=data)
 
     def cancel_order(self, order_id):
         """Cancel an order
