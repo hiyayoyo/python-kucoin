@@ -1207,7 +1207,7 @@ class Client(object):
             data['symbol'] = symbol
         return self._delete('orders', True, data=data)
     
-    def cancel_all_orders(self, symbol=None):
+    def cancel_all_margin_orders(self, symbol=None):
         """Cancel all orders
         https://docs.kucoin.com/#cancel-all-orders
         .. code:: python
