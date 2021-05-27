@@ -1045,6 +1045,110 @@ class Client(object):
             data['visible_size'] = visible_size
 
         return self._post('orders', True, data=data)
+    
+    def create_margin_limit_order(self, symbol, side, price, size, client_oid=None, remark=None,
+                           time_in_force=None, stop=None, stop_price=None, stp=None, cancel_after=None, post_only=None,
+                           hidden=None, iceberg=None, visible_size=None):
+        """Create an order
+
+        https://docs.kucoin.com/#place-a-new-order
+
+        :param symbol: Name of symbol e.g. KCS-BTC
+        :type symbol: string
+        :param side: buy or sell
+        :type side: string
+        :param price: Name of coin
+        :type price: string
+        :param size: Amount of base currency to buy or sell
+        :type size: string
+        :param client_oid: (optional) Unique order_id  default flat_uuid()
+        :type client_oid: string
+        :param remark: (optional) remark for the order, max 100 utf8 characters
+        :type remark: string
+        :param stp: (optional) self trade protection CN, CO, CB or DC (default is None)
+        :type stp: string
+        :param time_in_force: (optional) GTC, GTT, IOC, or FOK (default is GTC)
+        :type time_in_force: string
+        :param stop: (optional) stop type loss or entry - requires stop_price
+        :type stop: string
+        :param stop_price: (optional) trigger price for stop order
+        :type stop_price: string
+        :param cancel_after: (optional) number of seconds to cancel the order if not filled
+            required time_in_force to be GTT
+        :type cancel_after: string
+        :param post_only: (optional) indicates that the order should only make liquidity. If any part of
+            the order results in taking liquidity, the order will be rejected and no part of it will execute.
+        :type post_only: bool
+        :param hidden: (optional) Orders not displayed in order book
+        :type hidden: bool
+        :param iceberg:  (optional) Only visible portion of the order is displayed in the order book
+        :type iceberg: bool
+        :param visible_size: (optional) The maximum visible size of an iceberg order
+        :type visible_size: bool
+
+        .. code:: python
+
+            order = client.create_limit_order('KCS-BTC', Client.SIDE_BUY, '0.01', '1000')
+
+        :returns: ApiResponse
+
+        .. code:: python
+
+            {
+                "orderOid": "596186ad07015679730ffa02"
+            }
+
+        :raises: KucoinResponseException, KucoinAPIException, LimitOrderException
+
+        """
+
+        if stop and not stop_price:
+            raise LimitOrderException('Stop order needs stop_price')
+
+        if stop_price and not stop:
+            raise LimitOrderException('Stop order type required with stop_price')
+
+        if cancel_after and time_in_force != self.TIMEINFORCE_GOOD_TILL_TIME:
+            raise LimitOrderException('Cancel after only works with time_in_force = "GTT"')
+
+        if hidden and iceberg:
+            raise LimitOrderException('Order can be either "hidden" or "iceberg"')
+
+        if iceberg and not visible_size:
+            raise LimitOrderException('Iceberg order requires visible_size')
+
+        data = {
+            'symbol': symbol,
+            'side': side,
+            'type': self.ORDER_LIMIT,
+            'price': price,
+            'size': size
+        }
+
+        if client_oid:
+            data['clientOid'] = client_oid
+        else:
+            data['clientOid'] = flat_uuid()
+        if remark:
+            data['remark'] = remark
+        if stp:
+            data['stp'] = stp
+        if time_in_force:
+            data['timeInForce'] = time_in_force
+        if cancel_after:
+            data['cancelAfter'] = cancel_after
+        if post_only:
+            data['postOnly'] = post_only
+        if stop:
+            data['stop'] = stop
+            data['stopPrice'] = stop_price
+        if hidden:
+            data['hidden'] = hidden
+        if iceberg:
+            data['iceberg'] = iceberg
+            data['visible_size'] = visible_size
+
+        return <client_object>._post('margin/order', True, data=data)
 
     def cancel_order(self, order_id):
         """Cancel an order
