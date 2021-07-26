@@ -516,10 +516,10 @@ class Client(object):
     def create_inner_transfer(self, currency, from_type, to_type, amount, order_id=None):
 
         data = {
-            'currency': currency
-            'from': from_type
-            'to': to_type
-			'amount': amount
+            'currency': currency,
+            'from': from_type,
+            'to': to_type,
+	    'amount': amount
         }
 
         if order_id:
