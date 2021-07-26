@@ -513,40 +513,13 @@ class Client(object):
 
         return self._get('accounts/{}/holds'.format(account_id), True, data=data)
 
-    def create_inner_transfer(self, from_account_id, to_account_id, amount, order_id=None):
-        """Get account holds placed for any active orders or pending withdraw requests
-
-        https://docs.kucoin.com/#get-holds
-
-        :param from_account_id: ID of account to transfer funds from - from list_accounts()
-        :type from_account_id: str
-        :param to_account_id: ID of account to transfer funds to - from list_accounts()
-        :type to_account_id: str
-        :param amount: Amount to transfer
-        :type amount: int
-        :param order_id: (optional) Request ID (default flat_uuid())
-        :type order_id: string
-
-        .. code:: python
-
-            transfer = client.create_inner_transfer('5bd6e9216d99522a52e458d6', 5bc7f080b39c5c03286eef8e', 20)
-
-        :returns: API Response
-
-        .. code-block:: python
-
-            {
-                "orderId": "5bd6e9286d99522a52e458de"
-            }
-
-        :raises:  KucoinResponseException, KucoinAPIException
-
-        """
+    def create_inner_transfer(self, currency, from_type, to_type, amount, order_id=None):
 
         data = {
-            'payAccountId': from_account_id,
-            'recAccountId': to_account_id,
-            'amount': amount
+            'currency': currency
+            'from': from_type
+            'to': to_type
+			'amount': amount
         }
 
         if order_id:
